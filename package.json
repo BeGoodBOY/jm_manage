@@ -1,8 +1,8 @@
 {
-  "name": "vue2-manage",
-  "version": "1.0.1",
-  "description": "vue2-manage",
-  "author": "cangdu <1264889788@qq.com>",
+  "name": "jm_manage",
+  "version": "1.0.0",
+  "description": "jm_manage",
+  "author": "Li",
   "license": "GPL",
   "private": true,
   "scripts": {
@@ -15,8 +15,9 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "echarts": "^3.5.4",
-    "element-ui": "^1.2.9",
+    "element-ui": "^2.13.2",
     "time-formater": "^1.0.1",
     "vue": "^2.2.6",
     "vue-quill-editor": "^2.2.1",

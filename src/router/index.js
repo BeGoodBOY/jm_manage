@@ -21,6 +21,11 @@ const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'a
 const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
 const explain = r => require.ensure([], () => r(require('@/page/explain')), 'explain');
 
+const userInfo = r => require.ensure([], () => r(require('@/views/user_manage/userInfo')), 'userInfo');
+const debtList = r => require.ensure([], () => r(require('@/views/debt_manage/debtList')), 'debtList');
+const claimReview = r => require.ensure([], () => r(require('@/views/claim_manage/claimReview')), 'claimReview');
+const claimReviewDetail = r => require.ensure([], () => r(require('@/views/claim_manage/claimReviewDetail')), 'claimReviewDetail');
+
 const routes = [
 	{
 		path: '/',
@@ -34,6 +39,22 @@ const routes = [
 			path: '',
 			component: home,
 			meta: [],
+		},{
+			path: '/userInfo',
+			component: userInfo,
+			meta: ['用户管理', '用户信息'],
+		},{
+			path: '/debtList',
+			component: debtList,
+			meta: ['债权管理', '债权列表'],
+		},{
+			path: '/claimReview',
+			component: claimReview,
+			meta: ['用户认领管理', '用户认领审核'],
+		},{
+			path: '/claimReviewDetail/:id',
+			component: claimReviewDetail,
+			meta: ['用户认领管理', '用户认领审核', '查看详情'],
 		},{
 			path: '/addShop',
 			component: addShop,
