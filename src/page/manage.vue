@@ -26,7 +26,7 @@
           </el-submenu>
         </el-menu>
       </el-col>
-      <el-col :span="20" style="height: 100%;overflow: auto;">
+      <el-col :span="20" style="height: 100%;overflow: auto; ">
         <keep-alive>
           <router-view></router-view>
         </keep-alive>

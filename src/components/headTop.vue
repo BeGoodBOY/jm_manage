@@ -6,6 +6,7 @@
     </el-breadcrumb>
     <div class="header-rt">
       <span>当前用户：{{ username }}</span>
+      <i @click="loginOut" class="iconfont">&#xe62f;</i>
     </div>
   </div>
 </template>
@@ -13,7 +14,7 @@
 <script>
 import { signout } from "@/api/getData";
 import { mapActions, mapState } from "vuex";
-import { getStore } from '@/config/mUtils';
+import { getStore, setStore } from '@/config/mUtils';
 
 export default {
   data() {
@@ -25,18 +26,27 @@ export default {
     // if (!this.adminInfo.id) {
     //   this.getAdminData();
     // }
-    console.log(this.$route.meta)
   },
   computed: {
     // ...mapState(["adminInfo"])
   },
   methods: {
+    loginOut() {
+      setStore('jm_token', '')
+      setStore('jm_username', '')
+      setStore('jm_time', '')
+      this.$message({
+              type: "success",
+              message: "退出登录"
+            });
+      this.$router.push("/");
+    }
     // ...mapActions(["getAdminData"]),
     // async handleCommand(command) {
     //   if (command == "home") {
     //     this.$router.push("/manage");
     //   } else if (command == "signout") {
-    //     const res = await signout();
+    //     const res = await signout('jm_token', '');
     //     if (res.status == 1) {
     //       this.$message({
     //         type: "success",
@@ -78,5 +88,12 @@ export default {
   padding-right: 20px;
   font-size: 14px;
   color: #606266;
+  span {
+    display: inline-block;
+    padding-right: 12px;
+  }
+  .iconfont {
+    cursor: pointer;
+  }
 }
 </style>

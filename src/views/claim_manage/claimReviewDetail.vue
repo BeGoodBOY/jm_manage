@@ -2,6 +2,8 @@
   <div class="fillcontain">
     <head-top></head-top>
     <el-card class="box-card">
+      <el-page-header @back="goBack" style="margin-bottom:20px;">
+      </el-page-header>
       <table class="claimReview-detail">
         <tr>
           <td><span class="gray">认领人姓名：</span> {{ detailOb.strRealName }}</td>
@@ -87,6 +89,9 @@ export default {
     this.getConfirmReviewDetail();
   },
   methods: {
+    goBack() {
+      this.$router.back();
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },

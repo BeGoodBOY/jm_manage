@@ -2,7 +2,10 @@
   <div style="position:relative;height: 100%;overflow: auto;">
     <head-top></head-top>
 		<div class="full-screen">
-			<div class="white-filter"></div>
+				<div class="home-main">
+					<img src="../assets/img/jmLogo.png" alt="">
+					<p>欢迎进入认领系统</p>
+				</div>
 		</div>
   </div>
 </template>
@@ -24,17 +27,20 @@ export default {
 	left: -1px;
 	right: 0;
 	height: 100%;
-	background-image: url(../assets/img/login_bg.jpg);
+	background-image: url(../assets/img/main_bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
-	.white-filter {
-		position:absolute;
-		top:0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(255,255,255,0.6);
+
+}
+.home-main {
+	padding-top: 228px;
+	text-align: center;
+	img {
+		width: 174px;
+	}
+	p {
+		font-size: 22px;
+		color: #0268b8;
 	}
 }
-
 </style>
