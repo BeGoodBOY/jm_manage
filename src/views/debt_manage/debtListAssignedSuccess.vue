@@ -1,3 +1,4 @@
+// 债权待分配成功列表
 <template>
   <div class="fillcontain">
     <head-top></head-top>
@@ -35,13 +36,6 @@
               <el-option label="全部" value></el-option>
               <el-option label="回款中" value="0"></el-option>
               <el-option label="已完成" value="5"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="inline-block" label="分配状态">
-            <el-select v-model="form.nDebtState" placeholder="全部">
-              <el-option label="全部" value></el-option>
-              <el-option label="未匹配" value="0"></el-option>
-              <el-option label="匹配完成" value="10"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item class="inline-block" size="midium">
@@ -97,7 +91,10 @@ export default {
       limit: 20,
       count: 0,
       currentPage: 1,
-      form: {}
+      form: {
+        isSuccessList: 1, //1:为成功列表 , 其他:不是成功列表(其他列表时无需传递)
+        nDebtState: 10
+      }
     };
   },
   components: {
@@ -136,13 +133,6 @@ export default {
           type: "error",
           message: res.message
       });
-      // list.forEach(item => {
-      //     const tableData = {};
-      //     tableData.username = item.username;
-      //     tableData.registe_time = item.registe_time;
-      //     tableData.city = item.city;
-      //     this.tableData.push(tableData);
-      // })
     }
   }
 };

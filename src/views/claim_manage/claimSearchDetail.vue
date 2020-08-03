@@ -1,58 +1,40 @@
+// 用户认领查询-认领查询详情
 <template>
   <div class="fillcontain">
     <head-top></head-top>
     <el-card class="box-card">
-      <el-form ref="form" :model="form" label-width="80px" size="mini">
-        <el-row :gutter="12">
-          <el-col :span="8">
-            <el-form-item label="借款人ID">
-              <el-input v-model="form.nBorrowerUserID"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="16">
-            <el-form-item label="分配成功时间" label-width="100px">
-              <el-date-picker
-                type="date"
-                placeholder="选择日期"
-                value-format="yyyy-MM-dd"
-                v-model="form.strStartTime"
-                class="inline-block"
-              ></el-date-picker>
-              <span>-</span>
-              <el-date-picker
-                type="date"
-                placeholder="选择日期"
-                value-format="yyyy-MM-dd"
-                v-model="form.strEndTime"
-                class="inline-block"
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-form-item class="inline-block" label="回款状态">
-            <el-select v-model="form.nRepayState" placeholder="全部">
-              <el-option label="全部" value></el-option>
-              <el-option label="回款中" value="0"></el-option>
-              <el-option label="已完成" value="5"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="inline-block" label="分配状态">
-            <el-select v-model="form.nDebtState" placeholder="全部">
-              <el-option label="全部" value></el-option>
-              <el-option label="未匹配" value="0"></el-option>
-              <el-option label="匹配完成" value="10"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="inline-block" size="midium">
-            <el-button type="primary" @click="getDebtList">查询</el-button>
-            <el-button @click="clear">清除</el-button>
-          </el-form-item>
-        </el-row>
-      </el-form>
+      <el-page-header @back="goBack" style="margin-bottom:20px;">
+      </el-page-header>
+      <table class="claimReview-detail">
+        <tr>
+          <td><span class="gray">认领人姓名：</span> {{ detailOb.strRealName }}</td>
+          <td><span class="gray">实际匹配债权数：</span> {{ detailOb.nRegCount }}</td>
+        </tr>
+        <tr>
+          <td><span class="gray">认领人身份证：</span> {{ detailOb.strIdCard }}</td>
+          <td><span class="gray">实际匹配总金额：</span> {{ detailOb.decRegAmount }}</td>
+        </tr>
+        <tr>
+          <td><span class="gray">认领人手机号：</span> {{ detailOb.strMobil }}</td>
+          <td><span class="gray">匹配性质：</span> {{ detailOb.regType }}</td>
+        </tr>
+        <tr>
+          <td><span class="gray">申请认领金额：</span> {{ detailOb.decApplyAmount }}</td>
+          <td><span class="gray">认领确认状态：</span> {{ detailOb.strConfirmState }}</td>
+        </tr>
+        <tr>
+          <td><span class="gray">申请认领时间：</span>{{ detailOb.dtCreateTime }}</td>
+          <td><span class="gray">认领确认时间：</span> {{ detailOb.dtUserConfirmTime }}</td>
+        </tr>
+      </table>
     </el-card>
     <div class="table_container">
-      <el-table :data="tableData" highlight-current-row style="width: 100%">
+      <h3>匹配债权列表</h3>
+      <el-table
+        :data="tableData"
+        highlight-current-row
+        style="width: 100%"
+      >
         <el-table-column property="nProjectID" label="编号" width="100"></el-table-column>
         <el-table-column property="strProjectName" label="项目名称" width="200"></el-table-column>
         <el-table-column property="nBorrowerUserID" label="借款人ID" width="200"></el-table-column>
@@ -67,10 +49,7 @@
         <el-table-column property="strDealDate" label="借款时间" width="200"></el-table-column>
         <el-table-column property="strRepaymentCalcType" label="还款方式" width="200"></el-table-column>
         <el-table-column property="nMaxoverDueDays" label="逾期天数" width="200"></el-table-column>
-        <el-table-column property="remainAmount" label="实际认领金额" width="200"></el-table-column>
         <el-table-column property="strRepayState" label="回款状态" width="200"></el-table-column>
-        <el-table-column property="dtSuccessTime" label="分配成功时间" width="200"></el-table-column>
-        <el-table-column property="strDebtState" label="分配状态" width="200"></el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
         <el-pagination
@@ -88,7 +67,7 @@
 
 <script>
 import headTop from "@/components/headTop";
-import { getDebtList } from "@/api/getData";
+import { getMatchClaimList, getClaimSearchDetail} from "@/api/getData";
 export default {
   data() {
     return {
@@ -97,18 +76,20 @@ export default {
       limit: 20,
       count: 0,
       currentPage: 1,
-      form: {}
+      form: {},
+      detailOb: {}
     };
   },
   components: {
     headTop
   },
   created() {
-    this.getDebtList();
+    this.getMatchClaimList();
+    this.getClaimSearchDetail();
   },
   methods: {
-    clear() {
-      this.form = {};
+    goBack() {
+      this.$router.back();
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -116,14 +97,14 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.offset = (val - 1) * this.limit;
-      this.getDebtList();
+      this.getMatchClaimList();
     },
-    async getDebtList() {
+    async getMatchClaimList() {
       const res = (
-        await getDebtList({
+        await getMatchClaimList({
           pageNum: this.currentPage,
           pageSize: this.limit,
-          ...this.form,
+          id: this.$route.params.id
         })
       ).data;
       if(res.status === 200) {
@@ -135,14 +116,21 @@ export default {
       this.$message({
           type: "error",
           message: res.message
-      });
-      // list.forEach(item => {
-      //     const tableData = {};
-      //     tableData.username = item.username;
-      //     tableData.registe_time = item.registe_time;
-      //     tableData.city = item.city;
-      //     this.tableData.push(tableData);
-      // })
+      });      
+    },
+    async getClaimSearchDetail() {
+      const res = (await getClaimSearchDetail({
+        id: this.$route.params.id
+        })
+       ).data
+       if(res.status === 200) {
+          this.detailOb = res.result;
+          return;
+       }
+       this.$message({
+          type: "error",
+          message: res.message
+        });
     }
   }
 };
@@ -152,5 +140,24 @@ export default {
 @import "../../style/mixin";
 .table_container {
   padding: 20px;
+}
+
+h3 {
+  font-weight: normal;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.claimReview-detail {
+  font-size: 14px;
+  tr {
+    line-height: 2em;
+    td {
+      padding-right: 60px;
+      .gray {
+        color: #696969;
+      }
+    }
+  }
 }
 </style>

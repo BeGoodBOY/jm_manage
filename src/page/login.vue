@@ -61,9 +61,9 @@ export default {
             passwd: this.loginForm.password
           })).data;
           if (res.status == 200) {
-            setStore("jm_token", res.token);
-            setStore("jm_time", res.time);
-            setStore("jm_username", res.strUsername);
+            setStore("jm_token", res.result.token);
+            setStore("jm_time", res.result.time);
+            setStore("jm_username", res.result.strUsername);
             this.$message({
               type: "success",
               message: "登录成功"

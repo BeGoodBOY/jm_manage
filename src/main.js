@@ -11,8 +11,7 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI);
 // 504
 axios.interceptors.response.use(function (res) {
-	// 对响应数据做点什么
-	if(res.status === 504) {
+	if (res.status === 504 || res.status === 401) {
 		this.$message({
 			type: "error",
 			message: '登陆失效请重新登陆'

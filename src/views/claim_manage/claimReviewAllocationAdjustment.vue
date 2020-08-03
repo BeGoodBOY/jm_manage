@@ -1,3 +1,4 @@
+// 用户认领审核>分配调整
 <template>
   <div class="fillcontain">
     <head-top></head-top>
@@ -6,26 +7,18 @@
       </el-page-header>
       <table class="claimReview-detail">
         <tr>
-          <td><span class="gray">认领人姓名：</span> {{ detailOb.strRealName }}</td>
+          <td><span class="gray">申请认领金额：</span> {{ detailOb.decApplyAmount }}</td>
           <td><span class="gray">实际匹配债权数：</span> {{ detailOb.nRegCount }}</td>
         </tr>
         <tr>
-          <td><span class="gray">认领人身份证：</span> {{ detailOb.strIdCard }}</td>
           <td><span class="gray">实际匹配总金额：</span> {{ detailOb.decRegAmount }}</td>
-        </tr>
-        <tr>
-          <td><span class="gray">认领人手机号：</span> {{ detailOb.strMobil }}</td>
-          <td><span class="gray">匹配性质：</span> {{ detailOb.regType }}</td>
-        </tr>
-        <tr>
-          <td><span class="gray">申请认领金额：</span> {{ detailOb.decApplyAmount }}</td>
-          <td><span class="gray">最后操作人：</span> {{ detailOb.strUsername }}</td>
-        </tr>
-        <tr>
-          <td><span class="gray">申请认领时间：</span>{{ detailOb.dtCreateTime }}</td>
-          <td><span class="gray">最后操作时间：</span> {{ detailOb.lastModifyTime }}</td>
+          <td><span class="gray">需添加匹配总金额：</span> {{ detailOb.decUnmatchAmount }}</td>
         </tr>
       </table>
+      <div style="margin-top:20px;text-align:center;">
+        <el-button @click="beforeSendbackDebt">退回债权</el-button>
+        <el-button type="success" @click="goAddDebt">去添加债权</el-button>
+      </div>
     </el-card>
     <div class="table_container">
       <h3>匹配债权列表</h3>
@@ -33,7 +26,9 @@
         :data="tableData"
         highlight-current-row
         style="width: 100%"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column property="nProjectID" label="编号" width="100"></el-table-column>
         <el-table-column property="strProjectName" label="项目名称" width="200"></el-table-column>
         <el-table-column property="nBorrowerUserID" label="借款人ID" width="200"></el-table-column>
@@ -61,12 +56,19 @@
         ></el-pagination>
       </div>
     </div>
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>确认退回当前条目</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sendbackDebt">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import headTop from "@/components/headTop";
-import { getMatchClaimList, getConfirmReviewDetail} from "@/api/getData";
+import { getMatchClaimList, getClaimSearchDetail, sendbackDebt} from "@/api/getData";
 export default {
   data() {
     return {
@@ -78,7 +80,8 @@ export default {
       form: {},
       multipleSelection: [],
       dialogVisible: false,
-      detailOb: {}
+      detailOb: {},
+      multipleSelection: []
     };
   },
   components: {
@@ -86,9 +89,55 @@ export default {
   },
   created() {
     this.getMatchClaimList();
-    this.getConfirmReviewDetail();
+    this.getClaimSearchDetail();
   },
   methods: {
+    beforeSendbackDebt() {
+      if (!this.multipleSelection.length) {
+        this.$message({
+          type: "error",
+          message: "您没有选择要退回的条目"
+        });
+        return;
+      }
+
+      this.dialogVisible = true
+    },
+    async sendbackDebt() {
+      const arr = [];
+      this.multipleSelection.forEach(item => {
+        arr.push(item.id)
+      })
+      
+       const res = (
+        await sendbackDebt({
+          arr: arr.join(','),
+          strDealSN: this.detailOb.strDealSN 
+        })
+      ).data;
+
+      if (res.status == 200) {
+            this.$message({
+              type: "success",
+              message: "退回债权成功"
+            });
+            this.dialogVisible = false;
+            this.getMatchClaimList();
+            this.getClaimSearchDetail();
+          } else {
+            this.$message({
+              type: "error",
+              message: '审核失败，请重新审核'
+            });
+          }
+      
+    },
+    goAddDebt() {
+      this.$router.push('/debtListToBeAssigned');
+    }, 
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
     goBack() {
       this.$router.back();
     },
@@ -119,12 +168,12 @@ export default {
           message: res.message
       });
     },
-    async getConfirmReviewDetail() {
-      const res = (await getConfirmReviewDetail({
+    async getClaimSearchDetail() {
+      const res = (await getClaimSearchDetail({
         id: this.$route.params.id
         })
        ).data
-       if(res.status === 200) {
+       if(res.status === 200){
          this.detailOb = res.result;
          return;
        }
@@ -132,7 +181,6 @@ export default {
           type: "error",
           message: res.message
       });
-       
     }
   }
 };

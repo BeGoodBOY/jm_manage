@@ -2,7 +2,7 @@
   <div class="manage_page fillcontain">
     <el-row style="height: 100%;">
       <el-col :span="4" style="min-height: 100%; background-color: #223345;">
-        <el-menu :default-active="defaultActive" style="min-height: 100%; background: #223345;" theme="dark" router>
+        <el-menu :default-active="defaultActive" style="min-height: 100%; background: #223345;" router>
           <el-menu-item index="manage">
             <i class="el-icon-menu"></i>首页
           </el-menu-item>
@@ -17,12 +17,15 @@
               <i class="iconfont">&#xe60d;</i>债权管理
             </template>
             <el-menu-item index="/debtList">债权列表（全量）</el-menu-item>
+            <el-menu-item index="/debtListToBeAssigned">债权待分配列表</el-menu-item>
+            <el-menu-item index="/debtListAssignedSuccess">债权分配成功列表</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">
               <i class="iconfont">&#xe626;</i>用户认领管理
             </template>
             <el-menu-item index="/claimReview">用户认领审核</el-menu-item>
+            <el-menu-item index="/claimSearch">用户认领查询</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-col>

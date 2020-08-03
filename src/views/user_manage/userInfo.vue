@@ -125,9 +125,16 @@ export default {
           ...this.form
         })
       ).data;
-      const list = res.list;
-      this.count = res.total;
-      this.tableData = res.list;
+      if(res.status === 200) {
+        const list = res.result.list;
+        this.count = res.result.total;
+        this.tableData = list;
+        return;
+      }
+      this.$message({
+          type: "error",
+          message: res.message
+      });
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -135,21 +142,7 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.offset = (val - 1) * this.limit;
-      this.getUsers();
-    },
-    async getUsers() {
-      const Users = await getUserList({
-        offset: this.offset,
-        limit: this.limit
-      });
-      this.tableData = [];
-      Users.forEach(item => {
-        const tableData = {};
-        tableData.username = item.username;
-        tableData.registe_time = item.registe_time;
-        tableData.city = item.city;
-        this.tableData.push(tableData);
-      });
+      this.getUserList();
     }
   }
 };
